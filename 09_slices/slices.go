@@ -81,4 +81,13 @@ func main() {
 	fmt.Println(nums6)      //[[1 2 3] [4 5 6]]
 	fmt.Println(len(nums6)) // 2
 	fmt.Println(nums6[1])
+
+	arr := []int{2, 3, 4, 6, 8}
+	for i := 0; i < len(arr); i++ {
+		// fmt.Println(arr[i])
+	}
+
+	for i, v := range arr {
+		fmt.Printf("index %d, value %d! \n", i, v)
+	}
 }
