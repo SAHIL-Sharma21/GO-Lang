@@ -1,7 +1,9 @@
 // generics in go lang
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // to solve this duplicay we can use generics
 func printSlice[T int | string](items []T) { //only int and string can be accpeted
@@ -19,6 +21,17 @@ func printSlice[T int | string](items []T) { //only int and string can be accpet
 type Stack[T int | string] struct {
 	elements []T
 }
+
+// func (s *Stack[T]) addelement(num int) {
+// 	var element T
+// 	switch any(element).(type) {
+// 	case int:
+// 		element = any(num).(T)
+// 	case string:
+// 		element = any(strconv.Itoa(num)).(T)
+// 	}
+// 	s.elements = append(s.elements, element)
+// }
 
 // comparabele any multiple types
 func printAnything[T comparable, V string](items []T, name V) {
