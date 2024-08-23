@@ -85,26 +85,49 @@ func main() {
 	// fmt.Println(isDone)
 
 	//buffered channels -> limited amoutn of data without waiting
-	emailChan := make(chan string, 100) //buffered channel
-	done := make(chan bool)
+	// emailChan := make(chan string, 100) //buffered channel
+	// done := make(chan bool)
 
-	go emailSender(emailChan, done)
+	// go emailSender(emailChan, done)
 
-	// emailChan <- "sahil@gmail.com"
-	// emailChan <- "two@example.com"
+	// // emailChan <- "sahil@gmail.com"
+	// // emailChan <- "two@example.com"
 
-	//non blocking
-	// fmt.Println(<-emailChan)
-	// fmt.Println(<-emailChan)
+	// //non blocking
+	// // fmt.Println(<-emailChan)
+	// // fmt.Println(<-emailChan)
 
-	for i := 0; i < 100; i++ {
-		emailChan <- fmt.Sprintf("%d@gmail.com", i) //this is not blocking - bahoutfast send ho jayega
+	// for i := 0; i < 100; i++ {
+	// 	emailChan <- fmt.Sprintf("%d@gmail.com", i) //this is not blocking - bahoutfast send ho jayega
+	// }
+	// fmt.Println("done sending email...")
+
+	// //closing channel
+	// close(emailChan) //important to cliose the channel to avoid deadlock error
+
+	// <-done //blocking main goroutine
+
+	//multiple channel pr listen
+
+	chann1 := make(chan int)
+	chann2 := make(chan string)
+
+	// data send
+	go func() {
+		chann1 <- 10
+	}()
+
+	go func() {
+		chann2 <- "Pong"
+	}()
+
+	//recieve
+	for i := 0; i < 2; i++ {
+		select {
+		case chan1Val := <-chann1:
+			fmt.Println("recieved data from chan1", chan1Val)
+		case chan2Val := <-chann2:
+			fmt.Println("recieved data from chan2", chan2Val)
+		}
 	}
-	fmt.Println("done sending email...")
-
-	//closing channel
-	close(emailChan) //important to cliose the channel to avoid deadlock error
-
-	<-done //blockingmain goroutine
-
 }
