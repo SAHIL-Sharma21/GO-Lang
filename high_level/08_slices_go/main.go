@@ -37,4 +37,13 @@ func main() {
 	sort.Ints(highScores) //sort the slice in aesc
 	fmt.Println("sorted slice", highScores)
 	fmt.Println(sort.IntsAreSorted(highScores)) //true
+
+	//how to remove a value from slice based on index
+	var courses = []string{"Golang", "Rust", "Swift", "Dart", "Zig"}
+	fmt.Println(courses)
+
+	index := 2                                              //to be removed
+	courses = append(courses[:index], courses[index+1:]...) //removing using append method as slicing the slice
+	fmt.Println("courses", courses)
+
 }
