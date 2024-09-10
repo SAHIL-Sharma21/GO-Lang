@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -36,6 +37,26 @@ func (c *Course) IsEmpty() bool {
 }
 
 func main() {
+	fmt.Println("Api for my backend")
+
+	//making router
+	r := mux.NewRouter()
+
+	//seeding
+	courses = append(courses, Course{CourseId: "2", CourseName: "Golang + microservices", CoursePrice: 899, Author: &Author{Fullname: "Sahil Sharma", Website: "Sahil.dev"}})
+	courses = append(courses, Course{CourseId: "1", CourseName: "DevOps", CoursePrice: 599, Author: &Author{Fullname: "Sahil Sharma", Website: "Sahil.dev"}})
+	courses = append(courses, Course{CourseId: "4", CourseName: "MERN bootcamp", CoursePrice: 799, Author: &Author{Fullname: "Sahil Sharma", Website: "youtube"}})
+
+	//routing
+	r.HandleFunc("/", ServeHome).Methods("GET")
+	r.HandleFunc("/courses", getAllCourse).Methods("GET")
+	r.HandleFunc("/course/{id}", getOneCourse).Methods("GET")
+	r.HandleFunc("/course", createOneCourse).Methods("POST")
+	r.HandleFunc("/course/{id}", updateOneCourse).Methods("PUT")
+	r.HandleFunc("/course/{id}", deleteOneCourse).Methods("DELETE")
+
+	//listen to port
+	log.Fatal(http.ListenAndServe(":4000", r))
 
 }
 
@@ -70,7 +91,7 @@ func getOneCourse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode("No course found with given Id")
-	return
+	// return
 }
 
 func createOneCourse(w http.ResponseWriter, r *http.Request) {
@@ -84,11 +105,24 @@ func createOneCourse(w http.ResponseWriter, r *http.Request) {
 
 	// what about the data -> {}
 	var course Course
-	_ = json.NewDecoder(r.Body).Decode(&course)
+	err := json.NewDecoder(r.Body).Decode(&course)
+
+	if err != nil {
+		json.NewEncoder(w).Encode("Invalid data")
+		return
+	}
 
 	if course.IsEmpty() {
 		json.NewEncoder(w).Encode("No data inside the JSON")
 		return
+	}
+
+	//TODO: to check if course title is duplicate
+	for _, existingCourse := range courses {
+		if existingCourse.CourseName == course.CourseName {
+			json.NewEncoder(w).Encode("Course already exists, give different name")
+			return
+		}
 	}
 
 	//generate a unique id, convert to string
@@ -99,7 +133,7 @@ func createOneCourse(w http.ResponseWriter, r *http.Request) {
 	courses = append(courses, course)              //added
 
 	json.NewEncoder(w).Encode(course) //response
-	return
+	// return
 }
 
 func updateOneCourse(w http.ResponseWriter, r *http.Request) {
@@ -145,9 +179,8 @@ func deleteOneCourse(w http.ResponseWriter, r *http.Request) {
 	for index, course := range courses {
 		if course.CourseId == params["id"] {
 			courses = append(courses[:index], courses[index+1:]...)
-			json.NewEncoder(w).Encode(course)
+			json.NewEncoder(w).Encode("deleted the course with given Id..")
 			break //breakes the looop
 		}
 	}
-	json.NewEncoder(w).Encode("deleted the course with given Id..")
 }
