@@ -132,3 +132,22 @@ func updateOneCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// delete the one course
+func deleteOneCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Delete one course")
+	w.Header().Set("Content-Type", "application/json")
+
+	params := mux.Vars(r)
+
+	//loop, id , remove -index, index + 1
+
+	for index, course := range courses {
+		if course.CourseId == params["id"] {
+			courses = append(courses[:index], courses[index+1:]...)
+			json.NewEncoder(w).Encode(course)
+			break //breakes the looop
+		}
+	}
+	json.NewEncoder(w).Encode("deleted the course with given Id..")
+}
