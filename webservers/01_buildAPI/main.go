@@ -42,7 +42,7 @@ func main() {
 	//making router
 	r := mux.NewRouter()
 
-	//seeding
+	//seeding -> inserting data into database
 	courses = append(courses, Course{CourseId: "2", CourseName: "Golang + microservices", CoursePrice: 899, Author: &Author{Fullname: "Sahil Sharma", Website: "Sahil.dev"}})
 	courses = append(courses, Course{CourseId: "1", CourseName: "DevOps", CoursePrice: 599, Author: &Author{Fullname: "Sahil Sharma", Website: "Sahil.dev"}})
 	courses = append(courses, Course{CourseId: "4", CourseName: "MERN bootcamp", CoursePrice: 799, Author: &Author{Fullname: "Sahil Sharma", Website: "youtube"}})
