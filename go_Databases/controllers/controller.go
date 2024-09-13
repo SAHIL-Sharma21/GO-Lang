@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/SAHIL-Sharma21/mongoAPI/models"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -139,4 +140,28 @@ func GetAllMovies(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	allMovies := getAllMovies() //all movies
 	json.NewEncoder(w).Encode(allMovies)
+}
+
+// create a movie in database
+func CreateMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Allow-Control-Allow-Methods", "POST")
+
+	var movie models.Netflix
+
+	_ = json.NewDecoder(r.Body).Decode(&movie)
+	//passing to helper method
+	insertOneMovie(movie)
+
+	json.NewEncoder(w).Encode(movie)
+}
+
+func MarkAsWatched(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Allow-Control-Allow-Methods", "POST")
+
+	params := mux.Vars(r)
+
+	updateOneMovie(params["id"])
+	json.NewEncoder(w).Encode(params["id"])
 }
