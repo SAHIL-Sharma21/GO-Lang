@@ -73,3 +73,61 @@ func updateOneMovie(movieId string) {
 
 	fmt.Println("modified count:", result.ModifiedCount)
 }
+
+// delete 1 record from the database
+func deleteOneMovie(movieId string) {
+
+	id, err := primitive.ObjectIDFromHex(movieId)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	filter := bson.M{"_id": id}
+
+	deleteCount, err := collection.DeleteOne(context.Background(), filter)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("movie deleted successfully!", deleteCount.DeletedCount)
+}
+
+// delete all record
+func deleteAllMovie() {
+	// filter := bson.D{{}} // everything is selected and will be deleted
+	deleteCount, err := collection.DeleteMany(context.Background(), bson.D{{}}, nil)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("deleted all record and with delete count is", deleteCount.DeletedCount)
+}
+
+// get all movies from database
+func getAllMovies() []primitive.M {
+	cursor, err := collection.Find(context.Background(), bson.D{{}})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer cursor.Close(context.Background())
+
+	var movies []primitive.M
+
+	//loop through inside it
+	for cursor.Next(context.Background()) {
+		var movie bson.M
+
+		err := cursor.Decode(&movie) //if err is there then it will fatal otherwise we will push to movies slice
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		movies = append(movies, movie)
+	}
+	return movies
+}
